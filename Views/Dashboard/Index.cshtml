@@ -1,0 +1,90 @@
+﻿@using ShooterServiceDemo.Models
+@using ShooterServiceDemo.Models.ContextModels
+@model dynamic
+
+@{
+    IEnumerable<ShootingRecord> records = Model.Records;
+    ViewData["Title"] = "Index";
+}
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    </head>
+    <body>
+        <div class="row">
+            <div class="col-md-6">
+                <form method="get" class="container border text-left pt-2 mb-3">
+                    <div class="form-row form-group">
+                        <div class="col">
+                            <label asp-for="PageSize">Items per page</label>
+                            <select name="pageSize" class="form-control form-control-sm" onchange="this.form.submit()">
+                                <option value="10" @(Model.PageSize == 10 ? "selected" : "")>10</option>
+                                <option value="20" @(Model.PageSize == 20 ? "selected" : "")>20</option>
+                                <option value="50" @(Model.PageSize == 50 ? "selected" : "")>50</option>
+                                <option value="100" @(Model.PageSize == 100 ? "selected" : "")>100</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+                <form method="get" class="container border text-left pt-2 mb-3">
+                    <div class="form-row form-group">
+                        <div class="col">
+                            @for (int i=1; i<= Model.TotalPages; i++)
+                            {
+                                <a href="/?page=@i&pageSize=@Model.PageSize">@i</a>
+                            }
+                        </div>
+                    </div>
+                </form>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Dead ID</th>
+                            <th>Shooter ID</th>
+                            <th>HitZone</th>
+                            <th>ShootingTime</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in records)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.DeadID)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ShooterID)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => new HitZone(item.HitZoneID).Value)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ShootingTime)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <form method="post" action="/Shooting/Save" class="container border text-left pt-2 mb-3">
+                    <div class="form-row form-group">
+                        <div class="col">
+                            <label asp-for="ShooterID">Shooter ID</label>
+                            <input class="form-control" type="text" name="ShooterID" value="1" />
+                            <label asp-for="DeadID">Dead ID</label>
+                            <input class="form-control" type="text" name="DeadID" value="2" />
+                            <label asp-for="HitZone">Hit Zone</label>
+                            <select class="form-control" name="HitZoneID" class="form-control form-control-sm">
+                                @foreach (var item in HitZone.Options)
+                                {
+                                    <option value="@item.ID">@item.Value</option>
+                                }
+                            </select>
+                            <br /><input class="form-control btn btn-danger" type="submit" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </body>
